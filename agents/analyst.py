@@ -3,7 +3,7 @@ import json
 import logging
 from pathlib import Path
 
-from llm import call_llm
+from llm import call_llm, LLMError
 from schemas import AnalystOutput, Bucket
 
 logger = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ def analyze_customer(customer: dict) -> AnalystOutput:
             if customer.get("port_out_request_flag"):
                 parsed = force_critical_on_port_out(parsed)
             return AnalystOutput(**parsed)
-        except (json.JSONDecodeError, ValueError, KeyError) as e:
+        except Exception as e:  # broad: LLM failures, parse errors, schema validation
             logger.warning("Analyst attempt %d failed: %s", attempt + 1, e)
 
     return _fallback_safe_output(customer["customer_id"])
