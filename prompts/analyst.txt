@@ -1,0 +1,25 @@
+You are a telecom churn analyst. Analyze the customer data below and return a JSON object.
+
+Rules:
+- DO NOT use the customer's name or customer_id in your reasoning. Reason only over behavioral and account signals.
+- Score the customer 0-100 (higher = more likely to churn).
+- Assign one bucket based on the score:
+  SAFE     = 0-30
+  WATCH    = 31-55
+  AT_RISK  = 56-80
+  CRITICAL = 81-100
+- If port_out_request_flag is true, return CRITICAL regardless of the score (and score should be >= 85).
+- Identify exactly 3 concrete drivers contributing to the score (cite specific signals from the data, with numbers).
+- Provide a 1-2 sentence plain-English rationale.
+
+Output JSON only, no prose, matching this shape:
+{
+  "customer_id": "<string>",
+  "risk_score": <int 0-100>,
+  "bucket": "SAFE" | "WATCH" | "AT_RISK" | "CRITICAL",
+  "top_3_drivers": ["...", "...", "..."],
+  "rationale": "..."
+}
+
+Customer data:
+{customer_json}
