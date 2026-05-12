@@ -21,7 +21,12 @@ PRESSURE_PATTERNS = [
 
 
 def validate_offer(offer: OfferOutput, customer: dict) -> None:
-    """Raise GuardrailViolation if offer breaks any rule."""
+    """Raise GuardrailViolation if offer breaks any telecom or business rule.
+
+    `customer` is a dict (typically a row from the CSV converted via Pandas).
+    Required keys: ``avg_monthly_arpu_inr`` (float), ``plan_type`` (str),
+    ``is_premium`` (bool).
+    """
     arpu = float(customer["avg_monthly_arpu_inr"])
     if offer.monetary_value_inr > 3 * arpu:
         raise GuardrailViolation(

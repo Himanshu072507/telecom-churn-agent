@@ -70,6 +70,13 @@ def test_prepaid_customer_cannot_receive_postpaid_benefit():
         validate_offer(offer, CUSTOMER_PREPAID_FREE)
 
 
+def test_postpaid_customer_cannot_receive_recharge_offer():
+    customer = {"plan_type": "postpaid", "is_premium": False, "avg_monthly_arpu_inr": 800.0}
+    offer = base_offer(offer_details="Bonus 10% on your next recharge")
+    with pytest.raises(GuardrailViolation, match="recharge"):
+        validate_offer(offer, customer)
+
+
 def test_script_mentioning_competitor_fails():
     script = base_script(full_script="Hi, switching to Jio is a mistake, our network is better. We offer reliable service.")
     with pytest.raises(GuardrailViolation, match="competitor"):
