@@ -11,6 +11,7 @@ A Streamlit demo of a 3-agent churn reduction pipeline for telecom retention tea
 3. **Agent 2 — Voice Agent** writes a warm, ethical retention call script that references the offer, and plays it back via text-to-speech.
 
 A rule-based orchestrator gates which agents run based on the customer's bucket.
+
 <img width="1470" height="874" alt="image" src="https://github.com/user-attachments/assets/67448972-a502-46ab-9cb7-6cfb4c523c26" />
 
 ## Quick start
