@@ -12,8 +12,8 @@ OUT_PATH = Path(__file__).parent / "customers.csv"
 
 def generate() -> pd.DataFrame:
     random.seed(SEED)
-    fake = Faker("en_IN")
     Faker.seed(SEED)
+    fake = Faker("en_IN")
 
     rows = []
     for i in range(1, N_ROWS + 1):
@@ -40,6 +40,12 @@ def generate() -> pd.DataFrame:
         app_logins = random.randint(0, 60)
         loyalty = random.randint(0, 10000)
         family = random.choices(range(0, 7), weights=[60, 10, 10, 8, 6, 4, 2])[0]
+        last_recharge = random.randint(0, 60) if plan_type == "prepaid" else None
+        bill_delays = (
+            random.choices(range(0, 7), weights=[40, 25, 15, 10, 5, 3, 2])[0]
+            if plan_type == "postpaid"
+            else None
+        )
 
         row = {
             "customer_id": f"C{i:04d}",
@@ -51,8 +57,8 @@ def generate() -> pd.DataFrame:
             "complaints_last_90d": complaints,
             "offers_availed_last_180d": offers_availed,
             "data_usage_gb_trend": trend,
-            "last_recharge_days_ago": random.randint(0, 60) if plan_type == "prepaid" else None,
-            "bill_payment_delays_count": random.choices(range(0, 7), weights=[40, 25, 15, 10, 5, 3, 2])[0] if plan_type == "postpaid" else None,
+            "last_recharge_days_ago": last_recharge,
+            "bill_payment_delays_count": bill_delays,
             "network_issue_tickets": network_issues,
             "call_drop_rate_pct": call_drops,
             "last_outage_days_ago": last_outage,

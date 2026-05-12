@@ -39,7 +39,7 @@ def test_postpaid_customers_have_no_last_recharge(df):
     assert postpaid["last_recharge_days_ago"].isna().all()
 
 
-def test_port_out_flag_in_5_to_10_percent_range(df):
+def test_port_out_flag_in_expected_range(df):
     pct = df["port_out_request_flag"].mean() * 100
     assert 3 <= pct <= 12
 
