@@ -51,7 +51,7 @@ def test_analyst_output_rejects_score_above_100():
             risk_score=150,
             bucket=Bucket.AT_RISK,
             top_3_drivers=["a", "b", "c"],
-            rationale="x",
+            rationale="Test rationale longer than ten chars.",
         )
 
 
@@ -59,10 +59,10 @@ def test_offer_output_rejects_negative_value():
     with pytest.raises(ValidationError):
         OfferOutput(
             offer_type=OfferType.DATA_BOOST,
-            offer_details="x",
+            offer_details="Test offer details",
             monetary_value_inr=-100,
             validity_days=30,
-            justification="x",
+            justification="Test justification text.",
             expected_retention_lift="moderate",
         )
 
