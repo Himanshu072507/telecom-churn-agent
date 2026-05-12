@@ -5,7 +5,7 @@ import streamlit as st
 from agents.analyst import analyze_all
 from agents.executor import generate_offer
 from agents.voice import generate_script, script_to_audio_bytes
-from llm import provider_status
+from llm import provider_status, set_groq_key
 from orchestrator import gate, should_escalate, AgentName
 from schemas import Bucket
 
@@ -31,13 +31,26 @@ def run_analysis(rows: list[dict]) -> dict:
 
 
 def render_sidebar():
-    st.sidebar.title("Status")
+    st.sidebar.title("LLM provider")
+    current_key = st.session_state.get("groq_key", "")
+    new_key = st.sidebar.text_input(
+        "Groq API key (optional)",
+        type="password",
+        value=current_key,
+        placeholder="gsk_...",
+        help="Paste your Groq key for fast cloud LLM. Leave blank to use local Ollama.",
+    )
+    if new_key != current_key:
+        st.session_state["groq_key"] = new_key
+        set_groq_key(new_key or None)
+        st.cache_data.clear()
+        st.rerun()
+
     status = provider_status()
     if status["groq_configured"]:
         st.sidebar.success(f"Groq: {status['groq_model']}")
     else:
-        st.sidebar.info("Groq: not configured (Ollama fallback)")
-    st.sidebar.caption(f"Ollama fallback: {status['ollama_model']}")
+        st.sidebar.info(f"Using Ollama: {status['ollama_model']}")
     if st.sidebar.button("Regenerate analysis"):
         st.cache_data.clear()
         st.rerun()
@@ -234,12 +247,20 @@ def _render_flow_results(result: dict, bucket: Bucket):
 
 
 def main():
-    df = load_customers()
-    analysis_by_id = run_analysis(df.to_dict(orient="records"))
+    set_groq_key(st.session_state.get("groq_key") or None)
 
     render_sidebar()
     st.title("Telecom Churn Reduction Agent")
     st.caption("Demo data only. Not for production retention decisions.")
+
+    if not st.session_state.get("groq_key"):
+        st.warning(
+            "Paste a Groq API key in the sidebar for fast analysis (~30s for 200 customers). "
+            "Without it, the app falls back to local Ollama which can take several minutes."
+        )
+
+    df = load_customers()
+    analysis_by_id = run_analysis(df.to_dict(orient="records"))
 
     render_banner(analysis_by_id)
     selected_id = render_dashboard(df, analysis_by_id)

@@ -16,15 +16,17 @@ class LLMError(Exception):
     pass
 
 
-def _build_groq_client():
-    from groq import Groq
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        return None
-    return Groq(api_key=api_key)
+_groq_client = None  # set at runtime via set_groq_key() from the UI
 
 
-_groq_client = _build_groq_client()
+def set_groq_key(api_key: str | None) -> None:
+    """Set or clear the Groq API key (called from the Streamlit sidebar)."""
+    global _groq_client
+    if api_key:
+        from groq import Groq
+        _groq_client = Groq(api_key=api_key)
+    else:
+        _groq_client = None
 
 
 def _ollama_chat(system: str, user: str, expect_json: bool) -> str:
