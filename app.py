@@ -179,7 +179,10 @@ def run_retention_flow(customer: dict, analysis_dict: dict):
         offer = generate_offer(customer, analysis)
     with st.spinner("Generating retention script…"):
         script = generate_script(customer, analysis, offer)
-    audio = script_to_audio_bytes(script)
+    try:
+        audio = script_to_audio_bytes(script)
+    except Exception:
+        audio = None
     st.session_state.setdefault("flow_results", {})[customer["customer_id"]] = {
         "offer": offer.model_dump(),
         "script": script.model_dump(),
@@ -213,13 +216,21 @@ def _render_flow_results(result: dict, bucket: Bucket):
         script = result["script"]
         st.markdown(f"**Opening:** {script['opening_line']}")
         st.text_area("Full script", script["full_script"], height=200, label_visibility="collapsed")
-        st.audio(result["audio"], format="audio/mp3")
+        if result["audio"] is not None:
+            st.audio(result["audio"], format="audio/mp3")
+        else:
+            st.caption("Audio unavailable (TTS requires internet connection).")
         with st.expander("Do not say"):
             for item in script["do_not_say"]:
                 st.markdown(f"- {item}")
         with st.expander("Talking points"):
             for tp in script["key_talking_points"]:
                 st.markdown(f"- {tp}")
+
+    if should_escalate(bucket):
+        st.divider()
+        if st.button("🚨 Escalate to retention manager", key="escalate"):
+            st.toast("Escalation logged (demo). In production, this would notify the retention manager.")
 
 
 def main():

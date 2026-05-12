@@ -24,6 +24,7 @@ pip install -r requirements.txt
 cp .env.example .env
 # Optional: add GROQ_API_KEY to .env. Without it, the app uses local Ollama.
 
+# Optional: regenerate the CSV. A 200-row sample is already committed.
 python data/generate.py
 streamlit run app.py
 ```
