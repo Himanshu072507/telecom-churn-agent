@@ -189,9 +189,11 @@ def _print_dimension_stats(name: str, scores: dict[str, list[int]]):
 
 def main():
     key = os.getenv("GROQ_API_KEY")
-    if not key:
-        sys.exit("GROQ_API_KEY env var required.")
-    set_groq_key(key)
+    if key:
+        set_groq_key(key)
+        print("Provider: Groq")
+    else:
+        print("Provider: Ollama (GROQ_API_KEY not set — using local fallback)")
     if JUDGE_MODEL:
         print(f"Judge model override: {JUDGE_MODEL} (note: passed via prompt only; generator still uses default Groq model)")
 

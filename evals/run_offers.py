@@ -118,9 +118,11 @@ def main():
     args = parser.parse_args()
 
     key = os.getenv("GROQ_API_KEY")
-    if not key:
-        sys.exit("GROQ_API_KEY env var required.")
-    set_groq_key(key)
+    if key:
+        set_groq_key(key)
+        print("Provider: Groq")
+    else:
+        print("Provider: Ollama (GROQ_API_KEY not set)")
 
     print(f"Agent 3 guardrail eval — N={args.n} runs per scenario\n")
 

@@ -38,9 +38,11 @@ def main():
     args = parser.parse_args()
 
     key = os.getenv("GROQ_API_KEY")
-    if not key:
-        sys.exit("GROQ_API_KEY env var required. export GROQ_API_KEY=gsk_...")
-    set_groq_key(key)
+    if key:
+        set_groq_key(key)
+        print("Provider: Groq")
+    else:
+        print("Provider: Ollama (GROQ_API_KEY not set)")
 
     print(f"Anchor accuracy eval — N={args.n} runs per anchor\n")
     print(f"{'ID':<6} {'Designed':<10} {'Hits':<6} {'Buckets seen':<40} {'Accuracy'}")
